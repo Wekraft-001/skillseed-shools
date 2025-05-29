@@ -1,36 +1,62 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "./components/ui/toaster";
+import { Toaster as Sonner } from "./components/ui/sonner";
+import { TooltipProvider } from "./components/ui/tooltip";
+import { SidebarProvider } from "./contexts/SidebarContext";
+import { ThemeProvider } from "./components/theme-provider";
 
-function App() {
-  const [count, setCount] = useState(0);
+import Layout from "./components/Layout";
+import Index from "./pages/Index";
+import MemberManagement from "./pages/MemberManagement";
+import ClassAssignment from "./pages/ClassAssignment";
+import ProgramRollout from "./pages/ProgramRollout";
+import LearningGoals from "./pages/LearningGoals";
+import Analytics from "./pages/Analytics";
+import Reports from "./pages/Reports";
+import MentorSessions from "./pages/MentorSessions";
+import CollaborativePage from "./pages/CollaborativePage";
+import LiveEventsPage from "./pages/LiveEventsPage";
+import NotFound from "./pages/NotFound";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p className="font-bold text-7xl text-red-600">Vite + React</p>
+// Create a Tools index page that redirects to the first tool
+const ToolsIndex = () => <Navigate to="/tools/collaborative" replace />;
 
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
-}
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <ThemeProvider>
+        <SidebarProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Index />} />
+                <Route path="members" element={<MemberManagement />} />
+                <Route path="class-assignment" element={<ClassAssignment />} />
+                <Route path="program-rollout" element={<ProgramRollout />} />
+                <Route path="learning-goals" element={<LearningGoals />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="mentor-sessions" element={<MentorSessions />} />
+                {/* Tools section with nested routes */}
+                <Route path="tools" element={<ToolsIndex />} />
+                <Route
+                  path="tools/collaborative"
+                  element={<CollaborativePage />}
+                />
+                <Route path="tools/live-events" element={<LiveEventsPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </SidebarProvider>
+      </ThemeProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
