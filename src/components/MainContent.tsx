@@ -159,7 +159,7 @@ const EngagementChart = () => {
 
 const MainContent = () => {
   return (
-    <div className="bg-[#F7D683] min-h-[calc(100vh-80px)] font-nunito">
+    <div className="bg-[#FFF5EB] min-h-[calc(100vh-80px)] font-nunito">
       <div className="container mx-auto px-6 py-8">
         {/* Dashboard Overview */}
         <div
