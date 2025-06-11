@@ -1,5 +1,5 @@
 import { useState, useEffect, Fragment } from "react";
-import { Search, Bell, LogOut } from "lucide-react";
+import { Bell, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
@@ -70,20 +70,20 @@ const Header = () => {
     <header className="h-16 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-white z-50 font-nunito">
       <div className="flex items-center">
         <button
-          className="mr-2"
+          className="mr-2 cursor-pointer"
           onClick={toggleSidebar}
           aria-label="Toggle sidebar"
         >
           <IoMenu size={30} />
         </button>
 
-        <Link to="/" className="flex items-center">
+        <Link to="/home" className="flex items-center">
           <img src={Logo} className="w-14 h-14" />
-          <span className="font-bold text-lg">SkillSeed</span>
+          <span className="font-bold text-xl uppercase">SkillSeed</span>
         </Link>
       </div>
 
-      <div className="flex-1 max-w-xl mx-4">
+      {/* <div className="flex-1 max-w-xl mx-4 hidden">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-gray-400" />
@@ -94,9 +94,9 @@ const Header = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full bg-gray-100 text-sm"
           />
         </div>
-      </div>
+      </div> */}
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center md:space-x-3">
         {/* Notification Menu */}
         <Menu as="div" className="relative ml-3">
           <div>
@@ -195,8 +195,14 @@ const Header = () => {
           <div>
             <MenuButton className="flex rounded-full text-sm focus:outline-none">
               <span className="sr-only">Open user menu</span>
-              <div className="bg-[#3C91BA] w-9 h-9 text-sm text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
-                SS
+              <div className="flex items-center">
+                <div className="bg-[#3C91BA] w-9 h-9 text-sm text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
+                  SS
+                </div>
+                <div className="hidden md:flex flex-col items-start">
+                  <p className="font-semibold">Bright Future Academy</p>
+                  <p className="text-[#999797] text-xs">brightfa@gmail.com</p>
+                </div>
               </div>
             </MenuButton>
           </div>

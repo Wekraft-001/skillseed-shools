@@ -7,7 +7,7 @@ const LiveEventsPage = () => {
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Breadcrumb */}
         <div id="breadcrumb" className="flex items-center space-x-2 mb-8 text-sm">
-          <Link to="/" className="text-[#1A73E8] cursor-pointer">Dashboard</Link>
+          <Link to="/home" className="text-[#1A73E8] cursor-pointer">Dashboard</Link>
           <ChevronRight className="text-gray-400 w-4 h-4" />
           <Link to="/tools" className="text-[#1A73E8] cursor-pointer">Tools</Link>
           <ChevronRight className="text-gray-400 w-4 h-4" />

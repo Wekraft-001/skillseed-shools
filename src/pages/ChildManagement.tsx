@@ -3,6 +3,7 @@ import { ChevronRight, Plus, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { TiDeleteOutline } from "react-icons/ti";
 import { PageMetadata } from "../components/PageMetadata";
+import AddChildModal from "../components/modals/addChildModal";
 
 type Member = {
   firstName: string;
@@ -12,8 +13,8 @@ type Member = {
   grade: string;
 };
 
-const MemberManagement = () => {
-  const [members, setMembers] = useState<Member[]>([
+const ChildManagement = () => {
+  const members: Member[] = [
     {
       firstName: "Agnes",
       lastName: "Wambui",
@@ -28,36 +29,9 @@ const MemberManagement = () => {
       parentEmail: "kaycee@gmail.com",
       grade: "5",
     },
-  ]);
+  ];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newMember, setNewMember] = useState<Member>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    parentEmail: "",
-    grade: "",
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewMember((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAddMember = () => {
-    setMembers([...members, newMember]);
-    setNewMember({
-      firstName: "",
-      lastName: "",
-      email: "",
-      parentEmail: "",
-      grade: "",
-    });
-    setIsModalOpen(false);
-  };
 
   return (
     <>
@@ -70,23 +44,23 @@ const MemberManagement = () => {
         <div className="container mx-auto px-6 py-8">
           {/* Breadcrumb */}
           <div className="flex items-center space-x-2 mb-8 text-sm">
-            <Link to="/" className="text-[#3C91BA] cursor-pointer">
+            <Link to="/home" className="text-[#3C91BA] cursor-pointer">
               Dashboard
             </Link>
             <ChevronRight className="text-gray-400 w-4 h-4" />
-            <span className="text-gray-600">Member Management</span>
+            <span className="text-gray-600">Child Management</span>
           </div>
 
           {/* Member Table */}
           <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8">
             <div className="w-full flex items-center justify-between pb-3">
-              <h2 className="text-xl font-bold">Members</h2>
+              <h2 className="text-xl font-bold">Children</h2>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FAB548] text-white px-4 md:px-8 py-3 rounded-full text-sm flex items-center font-semibold cursor-pointer"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Member
+                Add Child
               </button>
             </div>
 
@@ -159,8 +133,8 @@ const MemberManagement = () => {
         </div>
       </div>
 
-      {/* Modal for Add Member */}
-      {isModalOpen && (
+      {/* Modal for Add Child */}
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
             <h3 className="text-lg font-bold mb-4">Add New Member</h3>
@@ -195,9 +169,10 @@ const MemberManagement = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
+      <AddChildModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </>
   );
 };
 
-export default MemberManagement;
+export default ChildManagement;

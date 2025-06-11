@@ -84,11 +84,11 @@ const Sidebar = () => {
   };
 
   const navItems = [
-    { icon: <Home className="w-5 h-5 mr-2" />, label: "Home", path: "/" },
+    { icon: <Home className="w-5 h-5 mr-2" />, label: "Home", path: "/home" },
     {
       icon: <Users className="w-5 h-5 mr-2" />,
-      label: "Member Management",
-      path: "/members",
+      label: "Child Management",
+      path: "/childManagement",
     },
     // {
     //   icon: <GraduationCap className="w-5 h-5 mr-2" />,
@@ -422,17 +422,29 @@ const Sidebar = () => {
       <div className={mobileSidebarClasses}>
         {navItems.map((item, index) => (
           <div key={index} className="mb-6">
-            <button
-              className={cn(
-                "sidebar-icon flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-sm",
-                isDropdownActive(item.path) && "text-blue-600"
-              )}
-              onClick={(e) =>
-                item.hasDropdown ? toggleSubmenu(e, item.path) : null
+            <NavLink
+              to={item.path}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center text-base font-medium w-full rounded-full",
+                  isActive
+                    ? "bg-[#3C91BA] text-white"
+                    : "text-black hover:bg-[#3C91BA]"
+                )
               }
             >
-              {React.cloneElement(item.icon, { className: "w-5 h-5" })}
-            </button>
+              <button
+                className={cn(
+                  "sidebar-icon flex items-center justify-center w-10 h-10 rounded-full shadow-sm",
+                  isDropdownActive(item.path) && "text-blue-600"
+                )}
+                onClick={(e) =>
+                  item.hasDropdown ? toggleSubmenu(e, item.path) : null
+                }
+              >
+                {React.cloneElement(item.icon, { className: "w-5 h-5" })}
+              </button>
+            </NavLink>
           </div>
         ))}
       </div>
