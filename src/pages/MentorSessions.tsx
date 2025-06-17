@@ -1,4 +1,4 @@
-import { CalendarCheck, UserCheck, Clock, Route, Plus, CheckCircle, Info, Download, ChevronRight } from 'lucide-react';
+import { CalendarCheck, UserCheck, Clock, Route, CheckCircle, Info, Download, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const MentorSessions = () => {
