@@ -65,9 +65,9 @@ const MentorSessions = () => {
             <div id="live-sessions" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
               <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
                 <h2 className="text-xl font-bold">Live Sessions</h2>
-                <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm flex items-center">
+                {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm flex items-center">
                   <Plus className="w-4 h-4 mr-2" />New Session
-                </button>
+                </button> */}
               </div>
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-green-50 border border-green-100 rounded-xl gap-4">
@@ -85,7 +85,7 @@ const MentorSessions = () => {
                     <span className="text-green-600 text-sm font-medium flex items-center">
                       <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div> Live Now
                     </span>
-                    <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button>
+                    {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button> */}
                   </div>
                 </div>
 
@@ -104,7 +104,7 @@ const MentorSessions = () => {
                     <span className="text-green-600 text-sm font-medium flex items-center">
                       <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div> Live Now
                     </span>
-                    <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button>
+                    {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button> */}
                   </div>
                 </div>
               </div>

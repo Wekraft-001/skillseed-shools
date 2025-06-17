@@ -61,9 +61,9 @@ const LearningGoals = () => {
                         </p>
                       </div>
                     </div>
-                    <button className="text-[#1A73E8] hover:bg-blue-50 p-1.5 sm:p-2 rounded-full">
+                    {/* <button className="text-[#1A73E8] hover:bg-blue-50 p-1.5 sm:p-2 rounded-full">
                       <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
+                    </button> */}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                     <div className="bg-gray-50 p-2 sm:p-3 rounded-xl">
@@ -116,9 +116,9 @@ const LearningGoals = () => {
                         </p>
                       </div>
                     </div>
-                    <button className="text-[#1A73E8] hover:bg-blue-50 p-1.5 sm:p-2 rounded-full">
+                    {/* <button className="text-[#1A73E8] hover:bg-blue-50 p-1.5 sm:p-2 rounded-full">
                       <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
-                    </button>
+                    </button> */}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3 sm:mt-4">
                     <div className="bg-gray-50 p-2 sm:p-3 rounded-xl">
