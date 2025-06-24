@@ -1,7 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Bell, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -18,7 +18,7 @@ import Logo from "../assets/logo.svg";
 const Header = () => {
   const { toggleSidebar } = useSidebar();
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  // const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -79,7 +79,7 @@ const Header = () => {
 
         <Link to="/home" className="flex items-center">
           <img src={Logo} className="w-14 h-14" />
-          <span className="font-bold text-xl uppercase">SkillSeed</span>
+          <span className="font-bold text-xl uppercase text-[#3C91BA]">SkillSeed</span>
         </Link>
       </div>
 
@@ -121,11 +121,11 @@ const Header = () => {
           >
             <MenuItems className="absolute right-0 z-50 mt-2 w-[300px] origin-top-right rounded-md bg-white py-1 shadow-lg focus:outline-none font-primaryRegular">
               <MenuItem>
-                <div className="p-4 pb-2 flex justify-between items-center border-b">
+                <div className="p-4 pb-2 flex justify-between items-center">
                   <h3 className="text-xl font-bold">Notifications</h3>
                 </div>
               </MenuItem>
-              <hr />
+              {/* <hr />
               <MenuItem>
                 <div className="flex p-2 gap-2 border-b">
                   <div className="bg-gray-100 text-black px-4 py-1 rounded-full text-sm font-medium">
@@ -135,7 +135,7 @@ const Header = () => {
                     Unread
                   </div>
                 </div>
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem>
                 <div className="bg-blue-50 flex items-center p-4 gap-4">
                   <div className="bg-white p-2 rounded-full">
@@ -217,7 +217,7 @@ const Header = () => {
           >
             <MenuItems className="absolute right-0 z-50 mt-2 w-[300px] origin-top-right rounded-md bg-white py-1 shadow-lg focus:outline-none font-primaryRegular">
               <MenuItem>
-                <div className="p-4 flex items-center gap-4 border-b">
+                <div className="p-4 flex items-center gap-4 ">
                   <Avatar className="h-14 w-14 bg-[#3C91BA]">
                     <AvatarFallback className="text-xl font-medium text-white bg-[#3C91BA]">
                       SS
@@ -229,11 +229,11 @@ const Header = () => {
                   </div>
                 </div>
               </MenuItem>
-              <hr />
+              {/* <hr /> */}
               <MenuItem>
                 <Link
                   to="/dashboard/profile"
-                  className="block px-4 py-2 text-sm text-gray-700"
+                  className="block px-4 py-2"
                 >
                   <div className="flex items-center gap-2 text-base">
                     <svg
@@ -317,7 +317,7 @@ const Header = () => {
                   Help Center
                 </div>
               </MenuItem>
-              <MenuItem>
+              {/* <MenuItem>
                 <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between">
                     <span className="text-base">Dark Mode</span>
@@ -377,7 +377,7 @@ const Header = () => {
                     </button>
                   </div>
                 </div>
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem>
                 <div className="flex items-center gap-3 text-base w-full justify-center py-3">
                   <LogOut size={20} />

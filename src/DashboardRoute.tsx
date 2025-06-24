@@ -27,28 +27,31 @@ const queryClient = new QueryClient();
 const DashboardRoute = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* <ThemeProvider> */}
-      <SidebarProvider>
-        <Toaster />
-        <Sonner />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route path="home" element={<Index />} />
-            <Route path="childManagement" element={<ChildManagement />} />
-            <Route path="class-assignment" element={<ClassAssignment />} />
-            <Route path="program-rollout" element={<ProgramRollout />} />
-            <Route path="learning-goals" element={<LearningGoals />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="mentor-sessions" element={<MentorSessions />} />
-            {/* Tools section with nested routes */}
-            <Route path="tools" element={<ToolsIndex />} />
-            <Route path="tools/collaborative" element={<CollaborativePage />} />
-            <Route path="tools/live-events" element={<LiveEventsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </SidebarProvider>
+      {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
+        <SidebarProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route path="home" element={<Index />} />
+              <Route path="childManagement" element={<ChildManagement />} />
+              <Route path="class-assignment" element={<ClassAssignment />} />
+              <Route path="program-rollout" element={<ProgramRollout />} />
+              <Route path="learning-goals" element={<LearningGoals />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="mentor-sessions" element={<MentorSessions />} />
+              {/* Tools section with nested routes */}
+              <Route path="tools" element={<ToolsIndex />} />
+              <Route
+                path="tools/collaborative"
+                element={<CollaborativePage />}
+              />
+              <Route path="tools/live-events" element={<LiveEventsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </SidebarProvider>
       {/* </ThemeProvider> */}
     </TooltipProvider>
   </QueryClientProvider>
