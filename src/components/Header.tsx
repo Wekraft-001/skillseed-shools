@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { Bell, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 // import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
@@ -15,18 +16,19 @@ import {
 import { IoMenu } from "react-icons/io5";
 import Logo from "../assets/logo.svg";
 
+// Type definition for login form
+interface UserData {
+  email: string;
+  password: string;
+}
+
 const Header = () => {
+  const navigate = useNavigate();
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("schoolToken");
+  const [userData, setUserData] = useState<UserData>();
   const { toggleSidebar } = useSidebar();
-  const [mounted, setMounted] = useState(false);
   // const { theme, setTheme } = useTheme();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   const notifications = [
     {
@@ -66,6 +68,32 @@ const Header = () => {
     },
   ];
 
+  const handleLogout = () => {
+    localStorage.removeItem("schoolToken");
+    navigate("/");
+  };
+
+  useEffect(() => {
+    const userDetails = () => {
+      axios
+        .get(`${apiURL}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+        .then((response) => {
+          console.log(response.data, "User Info");
+          setUserData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching vendors:", error);
+        });
+    };
+
+    userDetails();
+  }, []);
+
   return (
     <header className="h-16 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-white z-50 font-nunito">
       <div className="flex items-center">
@@ -79,7 +107,9 @@ const Header = () => {
 
         <Link to="/home" className="flex items-center">
           <img src={Logo} className="w-14 h-14" />
-          <span className="font-bold text-xl uppercase text-[#3C91BA]">SkillSeed</span>
+          <span className="font-bold text-xl uppercase text-[#3C91BA]">
+            SkillSeed
+          </span>
         </Link>
       </div>
 
@@ -193,7 +223,7 @@ const Header = () => {
         {/* Profile Menu */}
         <Menu as="div" className="relative ml-3">
           <div>
-            <MenuButton className="flex rounded-full text-sm focus:outline-none">
+            <MenuButton className="flex rounded-full text-sm focus:outline-none cursor-pointer">
               <span className="sr-only">Open user menu</span>
               <div className="flex items-center">
                 <div className="bg-[#3C91BA] w-9 h-9 text-sm text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
@@ -201,7 +231,7 @@ const Header = () => {
                 </div>
                 <div className="hidden md:flex flex-col items-start">
                   <p className="font-semibold">Bright Future Academy</p>
-                  <p className="text-[#999797] text-xs">brightfa@gmail.com</p>
+                  <p className="text-[#999797] text-xs">{userData?.email}</p>
                 </div>
               </div>
             </MenuButton>
@@ -225,16 +255,13 @@ const Header = () => {
                   </Avatar>
                   <div>
                     <h3 className="text-xl font-bold">Skillseed School</h3>
-                    <p className="text-[#3C91BA]">school@skillseed.com</p>
+                    <p className="text-[#3C91BA]  break-words text-sm max-w-[200px]">{userData?.email}</p>
                   </div>
                 </div>
               </MenuItem>
               {/* <hr /> */}
               <MenuItem>
-                <Link
-                  to="/dashboard/profile"
-                  className="block px-4 py-2"
-                >
+                <Link to="/dashboard/profile" className="block px-4 py-2">
                   <div className="flex items-center gap-2 text-base">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -379,7 +406,10 @@ const Header = () => {
                 </div>
               </MenuItem> */}
               <MenuItem>
-                <div className="flex items-center gap-3 text-base w-full justify-center py-3">
+                <div
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 text-base w-full justify-center py-3 cursor-pointer"
+                >
                   <LogOut size={20} />
                   <span>Logout</span>
                 </div>
