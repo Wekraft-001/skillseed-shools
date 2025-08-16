@@ -1,8 +1,8 @@
-import { useState, useEffect, Fragment } from "react";
-import { Bell, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Fragment } from "react";
 import axios from "axios";
-// import { useTheme } from "next-themes";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Bell, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -16,19 +16,11 @@ import {
 import { IoMenu } from "react-icons/io5";
 import Logo from "../assets/logo.svg";
 
-// Type definition for login form
-interface UserData {
-  email: string;
-  password: string;
-}
-
 const Header = () => {
   const navigate = useNavigate();
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("schoolToken");
-  const [userData, setUserData] = useState<UserData>();
   const { toggleSidebar } = useSidebar();
-  // const { theme, setTheme } = useTheme();
 
   const notifications = [
     {
@@ -73,26 +65,33 @@ const Header = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    const userDetails = () => {
-      axios
-        .get(`${apiURL}/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        })
-        .then((response) => {
-          console.log(response.data, "User Info");
-          setUserData(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching vendors:", error);
-        });
-    };
+  const fetchUserDetails = async () => {
+    const { data } = await axios.get(`${apiURL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    // console.log(data);
+    return data;
+  };
+  const { data: userData } = useQuery({
+    queryKey: ["userDetails"],
+    queryFn: fetchUserDetails,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
 
-    userDetails();
-  }, []);
+  const getInitials = (schoolName?: string): string => {
+    if (!schoolName || schoolName.trim() === "") return "NN";
+
+    const words = schoolName.trim().split(" ");
+    const first = words[0]?.[0]?.toUpperCase() ?? "";
+    const last =
+      words.length > 1 ? words[words.length - 1][0]?.toUpperCase() ?? "" : "";
+
+    return first + last || "NN";
+  };
 
   return (
     <header className="h-16 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-white z-50 font-nunito">
@@ -107,7 +106,7 @@ const Header = () => {
 
         <Link to="/home" className="flex items-center">
           <img src={Logo} className="w-14 h-14" />
-          <span className="font-bold text-xl uppercase text-[#3C91BA]">
+          <span className="font-bold text-3xl uppercase text-[#3C91BA]">
             SkillSeed
           </span>
         </Link>
@@ -227,10 +226,10 @@ const Header = () => {
               <span className="sr-only">Open user menu</span>
               <div className="flex items-center">
                 <div className="bg-[#3C91BA] w-9 h-9 text-sm text-white text-center p-2 rounded-full mx-4 my-2 flex items-center justify-center">
-                  SS
+                  {getInitials(userData?.schoolName)}
                 </div>
                 <div className="hidden md:flex flex-col items-start">
-                  <p className="font-semibold">Bright Future Academy</p>
+                  <p className="font-semibold">{userData?.schoolName}</p>
                   <p className="text-[#999797] text-xs">{userData?.email}</p>
                 </div>
               </div>
@@ -250,12 +249,16 @@ const Header = () => {
                 <div className="p-4 flex items-center gap-4 ">
                   <Avatar className="h-14 w-14 bg-[#3C91BA]">
                     <AvatarFallback className="text-xl font-medium text-white bg-[#3C91BA]">
-                      SS
+                      {getInitials(userData?.schoolName)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="text-xl font-bold">Skillseed School</h3>
-                    <p className="text-[#3C91BA]  break-words text-sm max-w-[200px]">{userData?.email}</p>
+                    <h3 className="text-xl font-bold">
+                      {userData?.schoolName}
+                    </h3>
+                    <p className="text-[#3C91BA]  break-words text-sm max-w-[200px]">
+                      {userData?.email}
+                    </p>
                   </div>
                 </div>
               </MenuItem>
@@ -283,25 +286,27 @@ const Header = () => {
                 </Link>
               </MenuItem>
               <MenuItem>
-                <div className="flex items-center gap-2 text-base px-4 py-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-bar-chart-2"
-                  >
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                  Learning Progress
-                </div>
+                <Link to="/learning-goals">
+                  <div className="flex items-center gap-2 text-base px-4 py-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-bar-chart-2"
+                    >
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Learning Progress
+                  </div>
+                </Link>
               </MenuItem>
               <MenuItem>
                 <div className="flex items-center gap-2 text-base px-4 py-2">

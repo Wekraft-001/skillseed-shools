@@ -78,7 +78,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
     form.append("image", image);
 
     try {
-      const response = await axios.post(`${apiURL}/auth/addStudent`, form, {
+      const response = await axios.post(`${apiURL}/school/dashboard/register-student`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

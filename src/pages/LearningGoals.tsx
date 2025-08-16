@@ -1,12 +1,10 @@
 import {
   ChevronRight,
-  Pen,
   Atom,
   Lightbulb,
   Brain,
   Users,
   Palette,
-  Star,
   Check,
   Clock,
 } from "lucide-react";
@@ -153,49 +151,6 @@ const LearningGoals = () => {
             </div>
 
             {/* Goal Templates */}
-            <div
-              id="goal-templates"
-              className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
-            >
-              <h2 className="text-xl font-bold mb-4 sm:mb-6">
-                Learning Goal Templates
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
-                  <div className="bg-orange-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
-                    <Brain className="text-orange-600 w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <h3 className="font-semibold mb-1 sm:mb-2">
-                    Cognitive Skills
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    Focus on analytical and critical thinking development
-                  </p>
-                </div>
-
-                <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
-                  <div className="bg-green-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
-                    <Users className="text-green-600 w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <h3 className="font-semibold mb-1 sm:mb-2">Social Skills</h3>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    Enhance communication and collaboration abilities
-                  </p>
-                </div>
-
-                <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
-                  <div className="bg-purple-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
-                    <Palette className="text-purple-600 w-4 h-4 sm:w-5 sm:h-5" />
-                  </div>
-                  <h3 className="font-semibold mb-1 sm:mb-2">
-                    Creative Skills
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-500">
-                    Develop imagination and innovative thinking
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Right Column */}
@@ -242,7 +197,7 @@ const LearningGoals = () => {
             </div>
 
             {/* Recent Updates */}
-            <div
+            {/* <div
               id="goal-updates"
               className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100"
             >
@@ -286,6 +241,43 @@ const LearningGoals = () => {
                   </div>
                 </div>
               </div>
+            </div> */}
+          </div>
+        </div>
+        <div
+          id="goal-templates"
+          className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-gray-100 my-6"
+        >
+          <h2 className="text-xl font-bold mb-4 sm:mb-6">Intelligence Types</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
+              <div className="bg-orange-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
+                <Brain className="text-orange-600 w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <h3 className="font-semibold mb-1 sm:mb-2">Cognitive Skills</h3>
+              <p className="text-xs sm:text-sm text-gray-500">
+                Focus on analytical and critical thinking development
+              </p>
+            </div>
+
+            <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
+              <div className="bg-green-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
+                <Users className="text-green-600 w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <h3 className="font-semibold mb-1 sm:mb-2">Social Skills</h3>
+              <p className="text-xs sm:text-sm text-gray-500">
+                Enhance communication and collaboration abilities
+              </p>
+            </div>
+
+            <div className="border border-gray-100 rounded-xl p-3 sm:p-4 hover:border-[#1A73E8] cursor-pointer transition-colors">
+              <div className="bg-purple-100 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 sm:mb-3">
+                <Palette className="text-purple-600 w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <h3 className="font-semibold mb-1 sm:mb-2">Creative Skills</h3>
+              <p className="text-xs sm:text-sm text-gray-500">
+                Develop imagination and innovative thinking
+              </p>
             </div>
           </div>
         </div>

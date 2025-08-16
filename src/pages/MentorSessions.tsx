@@ -1,19 +1,33 @@
-import { CalendarCheck, UserCheck, Clock, Route, CheckCircle, Info, Download, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import {
+  CalendarCheck,
+  UserCheck,
+  Clock,
+  Download,
+  ChevronRight,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 const MentorSessions = () => {
   return (
     <div className="bg-[#F5F7FA] min-h-[calc(100vh-80px)] font-nunito">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Breadcrumb */}
-        <div id="breadcrumb" className="flex items-center space-x-2 mb-8 text-sm">
-          <Link to="/home" className="text-[#1A73E8] cursor-pointer">Dashboard</Link>
+        <div
+          id="breadcrumb"
+          className="flex items-center space-x-2 mb-8 text-sm"
+        >
+          <Link to="/home" className="text-[#1A73E8] cursor-pointer">
+            Dashboard
+          </Link>
           <ChevronRight className="text-gray-400 w-4 h-4" />
           <span className="text-gray-600">Mentor Sessions</span>
         </div>
-        
+
         {/* Session Overview Stats */}
-        <div id="session-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div
+          id="session-stats"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8"
+        >
           <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-green-100 p-3 rounded-full">
@@ -47,7 +61,7 @@ const MentorSessions = () => {
             <p className="text-purple-500 text-sm mt-2">This Month</p>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+          {/* <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div className="bg-orange-100 p-3 rounded-full">
                 <Route className="text-orange-600 w-5 h-5" />
@@ -56,13 +70,16 @@ const MentorSessions = () => {
             </div>
             <h3 className="text-2xl sm:text-3xl font-bold">8</h3>
             <p className="text-orange-500 text-sm mt-2">Planned This Week</p>
-          </div>
+          </div> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Live Sessions */}
           <div className="lg:col-span-2 space-y-6">
-            <div id="live-sessions" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+            <div
+              id="live-sessions"
+              className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100"
+            >
               <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
                 <h2 className="text-xl font-bold">Live Sessions</h2>
                 {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm flex items-center">
@@ -73,17 +90,24 @@ const MentorSessions = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-green-50 border border-green-100 rounded-xl gap-4">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="Mentor" className="w-12 h-12 rounded-full" />
+                      <img
+                        src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
+                        alt="Mentor"
+                        className="w-12 h-12 rounded-full"
+                      />
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
                       <h3 className="font-semibold">Robotics Workshop</h3>
-                      <p className="text-sm text-gray-500">Mr. Johnson • Grade 8</p>
+                      <p className="text-sm text-gray-500">
+                        Mr. Johnson • Grade 8
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <span className="text-green-600 text-sm font-medium flex items-center">
-                      <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div> Live Now
+                      <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div>{" "}
+                      Live Now
                     </span>
                     {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button> */}
                   </div>
@@ -92,17 +116,24 @@ const MentorSessions = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-xl gap-4">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
-                      <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Mentor" className="w-12 h-12 rounded-full" />
+                      <img
+                        src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg"
+                        alt="Mentor"
+                        className="w-12 h-12 rounded-full"
+                      />
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>
                     <div>
                       <h3 className="font-semibold">Art & Design</h3>
-                      <p className="text-sm text-gray-500">Ms. Thompson • Grade 6</p>
+                      <p className="text-sm text-gray-500">
+                        Ms. Thompson • Grade 6
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <span className="text-green-600 text-sm font-medium flex items-center">
-                      <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div> Live Now
+                      <div className="w-2 h-2 bg-green-600 rounded-full mr-1"></div>{" "}
+                      Live Now
                     </span>
                     {/* <button className="bg-[#1A73E8] text-white px-4 py-2 rounded-full text-sm">Join</button> */}
                   </div>
@@ -111,7 +142,7 @@ const MentorSessions = () => {
             </div>
 
             {/* Excursion Summary */}
-            <div id="excursion-summary" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+            {/* <div id="excursion-summary" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
               <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
                 <h2 className="text-xl font-bold">Recent Excursions</h2>
                 <button className="text-[#1A73E8] px-4 py-2 rounded-full text-sm hover:bg-blue-50">
@@ -154,13 +185,13 @@ const MentorSessions = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column */}
           <div className="space-y-6">
             {/* Attendance Tracking */}
-            <div id="attendance-tracking" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+            {/* <div id="attendance-tracking" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold mb-6">Today's Attendance</h2>
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded-xl">
@@ -185,20 +216,23 @@ const MentorSessions = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Quick Reports */}
-            <div id="quick-reports" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+            <div
+              id="quick-reports"
+              className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100"
+            >
               <h2 className="text-xl font-bold mb-6">Quick Reports</h2>
               <div className="space-y-3">
                 <button className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <span className="font-medium">Monthly Summary</span>
                   <Download className="w-4 h-4 text-[#1A73E8]" />
                 </button>
-                <button className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                {/* <button className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <span className="font-medium">Attendance Report</span>
                   <Download className="w-4 h-4 text-[#1A73E8]" />
-                </button>
+                </button> */}
                 <button className="w-full flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
                   <span className="font-medium">Session Logs</span>
                   <Download className="w-4 h-4 text-[#1A73E8]" />
@@ -207,7 +241,10 @@ const MentorSessions = () => {
             </div>
 
             {/* Upcoming Sessions */}
-            <div id="upcoming-sessions" className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+            <div
+              id="upcoming-sessions"
+              className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100"
+            >
               <h2 className="text-xl font-bold mb-6">Upcoming Sessions</h2>
               <div className="space-y-4">
                 <div className="flex items-center space-x-4 bg-gray-50 p-4 rounded-xl">

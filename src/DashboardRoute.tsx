@@ -17,6 +17,7 @@ import MentorSessions from "./pages/MentorSessions";
 import CollaborativePage from "./pages/CollaborativePage";
 import LiveEventsPage from "./pages/LiveEventsPage";
 import NotFound from "./pages/NotFound";
+import Resources from "./pages/Resources";
 
 // Create a Tools index page that redirects to the first tool
 const ToolsIndex = () => <Navigate to="/tools/collaborative" replace />;
@@ -39,6 +40,7 @@ const DashboardRoute = () => (
             <Route path="analytics" element={<Analytics />} />
             <Route path="reports" element={<Reports />} />
             <Route path="mentor-sessions" element={<MentorSessions />} />
+            <Route path="resources" element={<Resources />} />
             {/* Tools section with nested routes */}
             <Route path="tools" element={<ToolsIndex />} />
             <Route path="tools/collaborative" element={<CollaborativePage />} />
