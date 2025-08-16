@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ChevronRight, Plus, Edit } from "lucide-react";
-import { Link } from "react-router-dom";
-import { TiDeleteOutline } from "react-icons/ti";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import AddChildModal from "../components/modals/addChildModal";
 
-type Member = {
+type Student = {
   firstName: string;
   lastName: string;
   email: string;
@@ -15,134 +15,61 @@ type Member = {
 };
 
 const ChildManagement = () => {
-  const members: Member[] = [
-    {
-      firstName: "Agnes",
-      lastName: "Wambui",
-      email: "agnes@gmail.com",
-      parentEmail: "wambui@gmail.com",
-      grade: "7",
-      age: "6",
-    },
-    {
-      firstName: "Juliet",
-      lastName: "Kelechi",
-      email: "julie@gmail.com",
-      parentEmail: "kaycee@gmail.com",
-      grade: "5",
-      age: "12",
-    },
-    {
-      firstName: "Akere",
-      lastName: "Achu",
-      email: "akere@gmail.com",
-      parentEmail: "kaycee@gmail.com",
-      grade: "7",
-      age: "15",
-    },
-  ];
-
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("schoolToken");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+
+  const fetchStudents = async () => {
+    const res = await axios.get(`${apiURL}/school/dashboard/students`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(res.data, "students");
+    return res.data;
+  };
+  const fetchUserDetails = async () => {
+    const { data } = await axios.get(`${apiURL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    console.log(data);
+    return data;
+  };
+  const { data: userData } = useQuery({
+    queryKey: ["limit"],
+    queryFn: fetchUserDetails,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+  const { data: students = [] } = useQuery<Student[]>({
+    queryKey: ["students"],
+    queryFn: fetchStudents,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentStudents = students.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(students.length / itemsPerPage);
+
+  const totalStudents = students.length;
+  const limit = userData?.studentsLimit || 0;
+  const remaining = limit - totalStudents;
+  const percentage = limit > 0 ? (totalStudents / limit) * 100 : 0;
 
   return (
     <>
       <PageMetadata
-        title="Member Management | SkillSeed"
-        description="Manage your organization's members, roles, and permissions in one place"
+        title="Child Management | SkillSeed"
+        description="Manage your students you registered on Skillseed"
       />
 
-      <div className="hidden bg-[#F5F7FA] min-h-[calc(100vh-80px)] font-nunito">
-        <div className="container mx-auto px-6 py-8">
-          {/* Breadcrumb */}
-          <div className="flex items-center space-x-2 mb-8 text-sm">
-            <Link to="/home" className="text-[#3C91BA] cursor-pointer">
-              Dashboard
-            </Link>
-            <ChevronRight className="text-gray-400 w-4 h-4" />
-            <span className="text-gray-600">Child Management</span>
-          </div>
-
-          {/* Member Table */}
-          <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100 mb-6 sm:mb-8">
-            <div className="w-full flex items-center justify-between pb-3">
-              <h2 className="text-xl font-bold">Children</h2>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-[#FAB548] text-white px-4 md:px-8 py-3 rounded-full text-sm flex items-center font-semibold cursor-pointer"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Child
-              </button>
-            </div>
-
-            <div className="overflow-x-auto -mx-5 sm:-mx-6 px-5 sm:px-6">
-              <table className="w-full min-w-[600px]">
-                <thead>
-                  <tr className="text-left bg-gray-50">
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      First Name
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Last Name
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Email
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Parent's Email
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Grade
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Status
-                    </th>
-                    <th className="px-4 sm:px-6 py-3 text-sm font-medium text-gray-500">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {members.map((member, index) => (
-                    <tr key={index}>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
-                        {member.firstName}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
-                        {member.lastName}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
-                        {member.email}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
-                        {member.parentEmail}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
-                        {member.grade}
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
-                          Active
-                        </span>
-                      </td>
-                      <td className="px-4 sm:px-6 py-4">
-                        <div className="flex space-x-3">
-                          <button className="text-[#3C91BA] hover:text-[#3C91BA]/50">
-                            <Edit className="w-4 h-4" />
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <TiDeleteOutline size={20} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* UPDATE */}
       <div className="relative h-screen bg-gradient-to-br from-soft-gray via-blue-50 to-yellow-50 font-nunito overflow-x-hidden">
         <div className="container mx-auto px-6 py-8">
@@ -179,7 +106,7 @@ const ChildManagement = () => {
                   <div className="flex items-center space-x-2 mt-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                     <span className="text-sm text-green-600 font-semibold">
-                      27 students remaining
+                      {remaining} students remaining
                     </span>
                   </div>
                 </div>
@@ -187,17 +114,20 @@ const ChildManagement = () => {
               <div className="text-right">
                 <div className="bg-[#3C91BA]/35 p-6 rounded-2xl border-2 border-blue-200">
                   <p className="text-gray-600 text-sm">Students Added</p>
-                  <p className="text-2xl md:text-4xl font-bold text-primary-blue">3 / 30</p>
+                  <p className="text-2xl md:text-4xl font-bold text-[#3C91BA]">
+                    {totalStudents} / {limit}
+                  </p>
                   <div className="w-full bg-gray-200 rounded-full h-3 mt-3">
                     <div
                       className="bg-[#3C91BA] h-3 rounded-full"
-                      style={{ width: "10%" }}
+                      style={{ width: `${percentage}%` }}
                     ></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
           {/* Child Management Header */}
           <div
             id="child-management-header"
@@ -246,16 +176,13 @@ const ChildManagement = () => {
                     <th className="text-left py-4 px-4 text-deep-navy font-semibold">
                       Parent Email
                     </th>
-                    <th className="text-left py-4 px-4 text-deep-navy font-semibold">
-                      Status
-                    </th>
                     <th className="text-center py-4 px-4 text-deep-navy font-semibold">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-amber-100">
-                  {members.map((member, index) => (
+                  {currentStudents.map((member, index) => (
                     <tr
                       key={index}
                       className="border-b border-gray-50 hover:bg-blue-50 transition"
@@ -288,14 +215,9 @@ const ChildManagement = () => {
                       <td className="py-6 px-4 text-gray-600 whitespace-nowrap">
                         {member.parentEmail}
                       </td>
-                      <td className="py-6 px-4">
-                        <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-semibold">
-                          Active
-                        </span>
-                      </td>
                       <td className="py-6 px-4 text-center">
                         <div className="flex justify-center space-x-2">
-                          <button className="bg-[#3C91BA] text-white p-2 rounded-full hover:bg-blue-600 transition">
+                          <button className="bg-[#3C91BA] text-white p-2 rounded-full transition">
                             {/* Pen Icon */}
                             <svg
                               className="text-sm w-4 h-4"
@@ -321,6 +243,47 @@ const ChildManagement = () => {
                   ))}
                 </tbody>
               </table>
+              <div className="p-3 md:p-6 flex flex-col-reverse md:flex-row justify-between items-center gap-4">
+                <p className="text-gray-500">
+                  {" "}
+                  Showing {indexOfFirstUser + 1} to{" "}
+                  {Math.min(indexOfLastUser, students.length)} of{" "}
+                  {students.length} entries
+                </p>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    className="px-4 py-2 rounded-full border border-gray-200 hover:bg-blue-600 hover:text-white"
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-4 py-2 rounded-full border ${
+                        currentPage === i + 1
+                          ? "bg-blue-600 text-white"
+                          : "border-gray-200 hover:bg-blue-600 hover:text-white"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    className="px-4 py-2 rounded-full border border-gray-200 hover:bg-blue-600 hover:text-white"
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

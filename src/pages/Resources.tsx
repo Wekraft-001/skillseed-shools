@@ -1,15 +1,5 @@
 import React, { useState } from "react";
-import {
-  BookOpen,
-  Video,
-  Filter,
-  Download,
-  Eye,
-  Play,
-  Book,
-  Puzzle,
-  Gamepad,
-} from "lucide-react";
+import { BookOpen, Video, Download, Eye, Play, Book } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
   Dialog,
@@ -54,7 +44,7 @@ const Resources: React.FC = () => {
     <div className="relative">
       {/* Content Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-4xl">
+        <DialogContent className="sm:max-w-4xl bg-white">
           {selectedContent && (
             <>
               <DialogHeader>
@@ -151,7 +141,7 @@ const Resources: React.FC = () => {
                   Access educational videos, books, and learning materials
                 </p>
               </div>
-              <div className="flex space-x-4">
+              {/* <div className="flex space-x-4">
                 <button className="bg-gradient-to-r from-primary-blue to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition flex items-center">
                   <Filter className="w-4 h-4 mr-2" />
                   Filter Content
@@ -160,7 +150,7 @@ const Resources: React.FC = () => {
                   <Download className="w-4 h-4 mr-2" />
                   Download All
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -176,19 +166,19 @@ const Resources: React.FC = () => {
               <Book className="w-4 h-4 mr-2" />
               Books
             </button>
-            <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
+            {/* <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
               <Gamepad className="w-4 h-4 mr-2" />
               Activities
             </button>
             <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
               <Puzzle className="w-4 h-4 mr-2" />
               Resources
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="w-full">
           {/* Main Content Area */}
           <div className="lg:col-span-3">
             {/* Videos Section */}
@@ -559,8 +549,7 @@ const Resources: React.FC = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
-            {/* Content Stats */}
+          {/* <div className="space-y-8">
             <div
               id="content-stats"
               className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-100 relative overflow-hidden"
@@ -602,7 +591,7 @@ const Resources: React.FC = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
