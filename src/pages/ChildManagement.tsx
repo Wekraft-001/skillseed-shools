@@ -32,7 +32,7 @@ const ChildManagement = () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data, "students");
+    // console.log(res.data, "students");
     return res.data;
   };
   const fetchUserDetails = async () => {
