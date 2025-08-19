@@ -153,10 +153,9 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
     form.append("role", "student");
 
     try {
-      let response;
       if (child) {
         // PATCH request for editing
-        response = await axios.patch(
+        await axios.patch(
           `${apiURL}/school/dashboard/students/${child._id}`,
           form,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -164,11 +163,9 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
         alert("Child updated successfully!");
       } else {
         // POST request for adding
-        response = await axios.post(
-          `${apiURL}/school/dashboard/register-student`,
-          form,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await axios.post(`${apiURL}/school/dashboard/register-student`, form, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         alert("Child added successfully!");
       }
       setFormData({
