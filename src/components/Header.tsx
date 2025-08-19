@@ -66,7 +66,7 @@ const Header = () => {
   };
 
   const fetchUserDetails = async () => {
-    const { data } = await axios.get(`${apiURL}/users/me`, {
+    const { data } = await axios.get(`${apiURL}/school/dashboard/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-type": "application/json; charset=UTF-8",

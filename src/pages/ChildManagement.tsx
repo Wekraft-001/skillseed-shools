@@ -1,23 +1,27 @@
 import { useState } from "react";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import AddChildModal from "../components/modals/addChildModal";
 
 type Student = {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   parentEmail: string;
   grade: string;
   age: string;
+  image: string;
 };
 
 const ChildManagement = () => {
+  const queryClient = useQueryClient();
   const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
   const token = localStorage.getItem("schoolToken");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingChild, setEditingChild] = useState<Student | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -38,7 +42,7 @@ const ChildManagement = () => {
         "Content-type": "application/json; charset=UTF-8",
       },
     });
-    console.log(data);
+    // console.log(data);
     return data;
   };
   const { data: userData } = useQuery({
@@ -62,6 +66,30 @@ const ChildManagement = () => {
   const limit = userData?.studentsLimit || 0;
   const remaining = limit - totalStudents;
   const percentage = limit > 0 ? (totalStudents / limit) * 100 : 0;
+
+  const handleDeleteChild = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this child?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${apiURL}/school/dashboard/students/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      alert("Child deleted successfully");
+
+      // Refetch students after deletion
+      queryClient.invalidateQueries({ queryKey: ["students"] });
+    } catch (error) {
+      console.error("Error deleting child:", error);
+      alert("Failed to delete child. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -190,7 +218,7 @@ const ChildManagement = () => {
                       <td className="py-6 px-4">
                         <div className="flex items-center space-x-4">
                           <img
-                            src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"
+                            src={member?.image}
                             alt="Emma"
                             className="w-12 h-12 rounded-full border-3 border-pink-200 shadow-lg"
                           />
@@ -217,20 +245,29 @@ const ChildManagement = () => {
                       </td>
                       <td className="py-6 px-4 text-center">
                         <div className="flex justify-center space-x-2">
-                          <button className="bg-[#3C91BA] text-white p-2 rounded-full transition">
+                          <button
+                            onClick={() => {
+                              setEditingChild(member);
+                              setIsModalOpen(true);
+                            }}
+                            className="bg-[#3C91BA] text-white p-2 rounded-full transition"
+                          >
                             {/* Pen Icon */}
                             <svg
-                              className="text-sm w-4 h-4"
+                              className="text-sm w-3 h-3"
                               fill="currentColor"
                               viewBox="0 0 512 512"
                             >
                               <path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z" />
                             </svg>
                           </button>
-                          <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition">
+                          <button
+                            onClick={() => handleDeleteChild(member._id)}
+                            className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition"
+                          >
                             {/* Trash Icon */}
                             <svg
-                              className="text-sm w-4 h-4"
+                              className="text-sm w-3 h-3"
                               fill="currentColor"
                               viewBox="0 0 448 512"
                             >
@@ -290,7 +327,15 @@ const ChildManagement = () => {
       </div>
 
       {/* Modal for Add Child */}
-      <AddChildModal open={isModalOpen} onOpenChange={setIsModalOpen} />
+      <AddChildModal
+        open={isModalOpen}
+        // onOpenChange={setIsModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setEditingChild(null); // reset on close
+          setIsModalOpen(open);
+        }}
+        child={editingChild}
+      />
     </>
   );
 };
