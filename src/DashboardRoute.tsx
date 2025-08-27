@@ -4,7 +4,6 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { SidebarProvider } from "./contexts/SidebarContext";
-
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import ChildManagement from "./pages/ChildManagement";
@@ -14,6 +13,7 @@ import LearningGoals from "./pages/LearningGoals";
 import Analytics from "./pages/Analytics";
 import Reports from "./pages/Reports";
 import MentorSessions from "./pages/MentorSessions";
+import MentorFeedback from "./pages/MentorFeedback";
 import CollaborativePage from "./pages/CollaborativePage";
 import LiveEventsPage from "./pages/LiveEventsPage";
 import NotFound from "./pages/NotFound";
@@ -40,6 +40,7 @@ const DashboardRoute = () => (
             <Route path="analytics" element={<Analytics />} />
             <Route path="reports" element={<Reports />} />
             <Route path="mentor-sessions" element={<MentorSessions />} />
+            <Route path="mentor-sessions/feedback" element={<MentorFeedback />} />
             <Route path="resources" element={<Resources />} />
             {/* Tools section with nested routes */}
             <Route path="tools" element={<ToolsIndex />} />

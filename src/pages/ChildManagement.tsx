@@ -26,7 +26,7 @@ const ChildManagement = () => {
   const itemsPerPage = 6;
 
   const fetchStudents = async () => {
-    const res = await axios.get(`${apiURL}/school/dashboard/students`, {
+    const res = await axios.get(`${apiURL}/school/dashboard/student`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",

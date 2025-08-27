@@ -1,26 +1,38 @@
+import { Link, useNavigate } from "react-router-dom";
 import {
   CalendarCheck,
   UserCheck,
   Clock,
   Download,
   ChevronRight,
+  MessageSquare,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const MentorSessions = () => {
+  const navigate = useNavigate();
+
+  const handleViewfeedback = () => {
+    navigate("/mentor-sessions/feedback");
+  };
   return (
     <div className="bg-[#F5F7FA] min-h-[calc(100vh-80px)] font-nunito">
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        {/* Breadcrumb */}
-        <div
-          id="breadcrumb"
-          className="flex items-center space-x-2 mb-8 text-sm"
-        >
-          <Link to="/home" className="text-[#1A73E8] cursor-pointer">
-            Dashboard
-          </Link>
-          <ChevronRight className="text-gray-400 w-4 h-4" />
-          <span className="text-gray-600">Mentor Sessions</span>
+        <div className="w-full flex items-center justify-between my-4">
+          <div className="flex items-center space-x-2 text-sm">
+            <Link to="/home" className="text-[#1A73E8] cursor-pointer">
+              Dashboard
+            </Link>
+            <ChevronRight className="text-gray-400 w-4 h-4" />
+            <span className="text-gray-600">Mentor Sessions</span>
+          </div>
+          <button
+            // onClick={() => setIsModalOpen(true)}
+            onClick={handleViewfeedback}
+            className="bg-[#FAB548] text-black px-4 md:px-8 py-3 rounded-full text-sm md:text-lg flex items-center justify-center font-semibold cursor-pointer"
+          >
+            <MessageSquare className="w-5 h-5 mr-2" />
+            Mentor Feedback
+          </button>
         </div>
 
         {/* Session Overview Stats */}
