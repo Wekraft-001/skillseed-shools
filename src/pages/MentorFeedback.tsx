@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Filter,
   Search,
@@ -10,7 +10,6 @@ import {
   Clock,
   Heart,
   ChevronDown,
-  X,
 } from "lucide-react";
 import { PageMetadata } from "../components/PageMetadata";
 import {
