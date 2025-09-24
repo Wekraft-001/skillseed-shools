@@ -26,7 +26,7 @@ const ChildManagement = () => {
   const itemsPerPage = 6;
 
   const fetchStudents = async () => {
-    const res = await axios.get(`${apiURL}/school/dashboard/student`, {
+    const res = await axios.get(`${apiURL}/school/dashboard/students`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -36,7 +36,7 @@ const ChildManagement = () => {
     return res.data;
   };
   const fetchUserDetails = async () => {
-    const { data } = await axios.get(`${apiURL}/users/me`, {
+    const { data } = await axios.get(`${apiURL}/school/dashboard/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-type": "application/json; charset=UTF-8",

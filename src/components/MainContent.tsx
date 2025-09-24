@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   ArrowUp,
@@ -21,7 +24,6 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { Link } from "react-router-dom";
 
 const engagementData = [
   { name: "Jan", engagement: 65, attendance: 72 },
@@ -161,6 +163,25 @@ const EngagementChart = () => {
 };
 
 const MainContent = () => {
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("schoolToken");
+  const fetchUserDetails = async () => {
+    const { data } = await axios.get(`${apiURL}/school/dashboard/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
+    // console.log(data);
+    return data;
+  };
+  const { data: userData } = useQuery({
+    queryKey: ["userDetails-home"],
+    queryFn: fetchUserDetails,
+    enabled: !!token,
+    staleTime: 5 * 60 * 1000,
+  });
+
   return (
     <div className="bg-gradient-to-br from-soft-gray via-blue-50 to-yellow-50 font-nunito relative overflow-x-hidden">
       {/* Floating Bubbles */}
@@ -185,15 +206,17 @@ const MainContent = () => {
                   <Users className="text-white text-2xl" />
                 </div>
               </div>
-              <h3 className="text-4xl font-bold text-deep-navy mb-2">2,456</h3>
+              <h3 className="text-4xl font-bold text-deep-navy mb-2">
+                {userData?.students?.length}
+              </h3>
               <p className="text-gray-600 font-medium">Total Students</p>
               <div className="flex items-center mt-3">
                 <div className="bg-green-100 p-1 rounded-full mr-2">
                   <ArrowUp className="text-green-600 text-xs" />
                 </div>
-                <span className="text-green-600 text-sm font-semibold">
+                {/* <span className="text-green-600 text-sm font-semibold">
                   12% increase
-                </span>
+                </span> */}
               </div>
             </div>
 
@@ -204,15 +227,15 @@ const MainContent = () => {
                   <BookOpen className="text-white text-2xl" />
                 </div>
               </div>
-              <h3 className="text-4xl font-bold text-deep-navy mb-2">12</h3>
+              <h3 className="text-4xl font-bold text-deep-navy mb-2">0</h3>
               <p className="text-gray-600 font-medium">Active Programs</p>
               <div className="flex items-center mt-3">
                 <div className="bg-blue-100 p-1 rounded-full mr-2">
                   <Info className="text-primary-blue text-xs" />
                 </div>
-                <span className="text-primary-blue text-sm font-semibold">
+                {/* <span className="text-primary-blue text-sm font-semibold">
                   2 pending
-                </span>
+                </span> */}
               </div>
             </div>
 
@@ -223,15 +246,15 @@ const MainContent = () => {
                   <ChartLine className="text-white text-2xl" />
                 </div>
               </div>
-              <h3 className="text-4xl font-bold text-deep-navy mb-2">89%</h3>
+              <h3 className="text-4xl font-bold text-deep-navy mb-2">0%</h3>
               <p className="text-gray-600 font-medium">Engagement Rate</p>
               <div className="flex items-center mt-3">
                 <div className="bg-green-100 p-1 rounded-full mr-2">
                   <ArrowUp className="text-green-600 text-xs" />
                 </div>
-                <span className="text-green-600 text-sm font-semibold">
+                {/* <span className="text-green-600 text-sm font-semibold">
                   7% increase
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
@@ -259,7 +282,7 @@ const MainContent = () => {
                     Add Program
                   </button> */}
                 </div>
-                <div className="space-y-6 relative z-10">
+                <div className="space-y-6 relative z-10 hidden">
                   <div className="bg-[#3C91BA]/75 p-6 rounded-2xl border-2 border-blue-200">
                     <div className="flex flex-col md:flex-row gap-5  md:items-center justify-between">
                       <div className="flex items-center space-x-4">
@@ -318,6 +341,7 @@ const MainContent = () => {
                     </div>
                   </div>
                 </div>
+                <div>No program yet</div>
               </div>
 
               {/* Analytics Chart */}
@@ -418,7 +442,8 @@ const MainContent = () => {
                 <h2 className="text-2xl font-bold text-deep-navy mb-8">
                   Upcoming Events
                 </h2>
-                <div className="space-y-4">
+                <div>No events</div>
+                {/* <div className="space-y-4">
                   <div className="flex items-center space-x-4 bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-2xl border-2 border-yellow-200">
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-accent-yellow to-yellow-500 rounded-full flex flex-col items-center justify-center text-white shadow-lg">
                       <span className="text-xs font-bold">MAY</span>
@@ -484,7 +509,7 @@ const MainContent = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

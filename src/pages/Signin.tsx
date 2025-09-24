@@ -48,7 +48,7 @@ const Signin: React.FC = () => {
 
     try {
       const response = await axios.post(url, loginDetails);
-      console.log(response, "response");
+      // console.log(response, "response");
 
       const accessToken = response.data.access_token;
       localStorage.setItem("schoolToken", accessToken);

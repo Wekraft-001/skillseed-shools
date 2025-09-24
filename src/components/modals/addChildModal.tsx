@@ -32,6 +32,7 @@ interface FormData {
   age: string;
   grade: string;
   password: string;
+  plainPassword: string;
 }
 
 const AddChildModal: React.FC<AddChildModalProps> = ({
@@ -54,6 +55,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
     age: child?.age || "",
     grade: child?.grade || "",
     password: "",
+    plainPassword: "",
   });
 
   const handleInputChange = (field: keyof FormData, value: string) => {
@@ -145,8 +147,14 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
   const handleSubmitChild = async () => {
     setLoading(true);
 
+    const updatedFormData = {
+      ...formData,
+      plainPassword: formData.password,
+    };
+
     const form = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
+
+    Object.entries(updatedFormData).forEach(([key, value]) => {
       if (value) form.append(key, value);
     });
     if (image) form.append("image", image);
@@ -175,6 +183,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
         age: "",
         grade: "",
         password: "",
+        plainPassword: "",
       });
       setImage(null);
       setPreview(null);
@@ -197,6 +206,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
         age: child.age,
         grade: child.grade,
         password: "", // password can stay empty unless you want to reset it
+        plainPassword: "",
       });
       setPreview(child.image || null);
     } else {
@@ -207,6 +217,7 @@ const AddChildModal: React.FC<AddChildModalProps> = ({
         age: "",
         grade: "",
         password: "",
+        plainPassword: "",
       });
       setImage(null);
       setPreview(null);

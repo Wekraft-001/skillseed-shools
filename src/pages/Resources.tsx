@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { BookOpen, Video, Download, Eye, Play, Book } from "lucide-react";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import { BookOpen, Video, Eye, Play, Book } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
   Dialog,
@@ -9,25 +11,25 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 
-// Define the shape of your content
-type ContentType = "video" | "text";
-
 interface ContentItem {
   id: string;
-  type: ContentType;
   title: string;
   description: string;
-  grade?: string;
-  duration?: string;
+  type: "video" | "book";
   videoUrl?: string;
-  content?: string; // for books/text
+  thumbnailUrl?: string;
+  author?: string;
+  content?: string;
 }
 
 const Resources: React.FC = () => {
+  const apiURL = import.meta.env.VITE_REACT_APP_BASE_URL;
+  const token = localStorage.getItem("schoolToken");
   const [selectedContent, setSelectedContent] = useState<ContentItem | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<"videos" | "books">("videos");
 
   const handleContentClick = (content: ContentItem) => {
     setSelectedContent(content);
@@ -39,6 +41,95 @@ const Resources: React.FC = () => {
     // Small delay to allow modal animation before clearing content
     setTimeout(() => setSelectedContent(null), 300);
   };
+
+  const fetchResources = async () => {
+    const res = await axios.get(`${apiURL}/content`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    // console.log(res.data, "content");
+    return res.data;
+  };
+
+  const {
+    data: resources = [],
+    isLoading,
+    isError,
+  } = useQuery<ContentItem[]>({
+    queryKey: ["resources"],
+    queryFn: fetchResources,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Filter content by type
+  const videos = resources.filter((item: ContentItem) => item.type === "video");
+  const books = resources.filter((item: ContentItem) => item.type === "book");
+
+  // Empty state component
+  const EmptyState = ({ type }: { type: "videos" | "books" }) => (
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+        {type === "videos" ? (
+          <Video className="w-12 h-12 text-gray-400" />
+        ) : (
+          <BookOpen className="w-12 h-12 text-gray-400" />
+        )}
+      </div>
+      <h3 className="text-xl font-semibold text-gray-600 mb-2">
+        No {type === "videos" ? "Videos" : "Books"} Available
+      </h3>
+      <p className="text-gray-500 max-w-md">
+        {type === "videos"
+          ? "There are no educational videos available at the moment. Check back later for new content!"
+          : "There are no digital books available at the moment. Check back later for new reading materials!"}
+      </p>
+    </div>
+  );
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex items-center justify-center py-16">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <span className="ml-4 text-gray-600">Loading resources...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="text-red-500 mb-4">
+            <svg
+              className="w-16 h-16 mx-auto"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">
+            Unable to Load Resources
+          </h3>
+          <p className="text-gray-600">
+            There was an error loading the content. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -54,11 +145,13 @@ const Resources: React.FC = () => {
                 <DialogDescription className="text-gray-600">
                   {selectedContent.description}
                 </DialogDescription>
-                {selectedContent.grade && (
-                  <div className="text-sm text-gray-500">
-                    Grade Level: {selectedContent.grade}
-                  </div>
-                )}
+                <div className="flex items-center space-x-4 mt-2">
+                  {selectedContent.author && (
+                    <div className="text-sm text-gray-500">
+                      By: {selectedContent.author}
+                    </div>
+                  )}
+                </div>
               </DialogHeader>
 
               <div className="mt-6">
@@ -66,19 +159,19 @@ const Resources: React.FC = () => {
                   <div className="aspect-w-16 aspect-h-9 bg-black rounded-lg overflow-hidden">
                     <div className="w-full h-96 bg-gray-100 flex items-center justify-center">
                       {selectedContent.videoUrl ? (
-                        <video
-                          className="w-full h-full object-cover"
-                          controls
-                          autoPlay
-                          src={selectedContent.videoUrl}
+                        <iframe
+                          className="w-full h-full"
+                          src={selectedContent.videoUrl
+                            .replace("youtu.be/", "youtube.com/embed/")
+                            .replace("?si=", "?start=0&")}
+                          title={selectedContent.title}
+                          frameBorder="0"
+                          allowFullScreen
                         />
                       ) : (
-                        <div className="text-white text-center p-8">
+                        <div className="text-gray-500 text-center p-8">
                           <Play className="w-16 h-16 mx-auto mb-4" />
-                          <p>Video Player</p>
-                          <p className="text-sm opacity-75 mt-2">
-                            {selectedContent.duration}
-                          </p>
+                          <p>Video not available</p>
                         </div>
                       )}
                     </div>
@@ -89,13 +182,13 @@ const Resources: React.FC = () => {
                       {selectedContent.title}
                     </h3>
                     <p className="text-gray-700 leading-relaxed">
-                      {selectedContent.content}
+                      {selectedContent.content || selectedContent.description}
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className="mt-6 flex justify-end space-x-3">
+              <div className="mt-6 flex justify-end">
                 <Button
                   variant="outline"
                   onClick={handleCloseModal}
@@ -103,17 +196,6 @@ const Resources: React.FC = () => {
                 >
                   Close
                 </Button>
-                {selectedContent.type === "video" ? (
-                  <Button className="bg-blue-600 hover:bg-blue-700 px-6">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Video
-                  </Button>
-                ) : (
-                  <Button className="bg-green-600 hover:bg-green-700 px-6">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download PDF
-                  </Button>
-                )}
               </div>
             </>
           )}
@@ -141,16 +223,6 @@ const Resources: React.FC = () => {
                   Access educational videos, books, and learning materials
                 </p>
               </div>
-              {/* <div className="flex space-x-4">
-                <button className="bg-gradient-to-r from-primary-blue to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition flex items-center">
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filter Content
-                </button>
-                <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition flex items-center">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download All
-                </button>
-              </div> */}
             </div>
           </div>
         </div>
@@ -158,440 +230,143 @@ const Resources: React.FC = () => {
         {/* Category Tabs */}
         <div id="category-tabs" className="mb-8">
           <div className="flex space-x-4 bg-white rounded-full p-2 shadow-lg border-2 border-gray-100">
-            <button className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary-blue to-blue-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg">
-              <Video className="w-4 h-4 mr-2" />
-              Videos
+            <button
+              onClick={() => setActiveTab("videos")}
+              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition ${
+                activeTab === "videos"
+                  ? "bg-gradient-to-r from-primary-blue to-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              <Video className="w-4 h-4" />
+              Videos ({videos.length})
             </button>
-            <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
-              <Book className="w-4 h-4 mr-2" />
-              Books
+            <button
+              onClick={() => setActiveTab("books")}
+              className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-semibold shadow-lg transition ${
+                activeTab === "books"
+                  ? "bg-gradient-to-r from-primary-blue to-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              <Book className="w-4 h-4" />
+              Books ({books.length})
             </button>
-            {/* <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
-              <Gamepad className="w-4 h-4 mr-2" />
-              Activities
-            </button>
-            <button className="w-full flex items-center justify-center gap-2 bg-gray-100 text-gray-600 px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-200 transition">
-              <Puzzle className="w-4 h-4 mr-2" />
-              Resources
-            </button> */}
           </div>
         </div>
 
         {/* Content Grid */}
         <div className="w-full">
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            {/* Videos Section */}
+          {/* Videos Section */}
+          {activeTab === "videos" && (
             <div id="videos-section" className="mb-12">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-deep-navy">
                   Educational Videos
                 </h3>
                 <span className="bg-accent-yellow text-deep-navy px-4 py-2 rounded-full text-sm font-semibold">
-                  24 Videos
+                  {videos.length} Videos
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Video Card 1 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-blue-100 card-hover">
-                  <div
-                    className="video-thumbnail h-40 relative flex items-center justify-center"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  >
-                    <Play className="text-white w-12 h-12" />
-                    <div className="absolute top-3 right-3 bg-accent-yellow text-deep-navy px-2 py-1 rounded-full text-xs font-bold">
-                      12:34
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="font-bold text-deep-navy mb-2">
-                      Introduction to STEAM
-                    </h4>
-                    <p className="text-gray-600 text-sm mb-3">
-                      Learn the basics of Science, Technology, Engineering, Arts
-                      &amp; Math
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
-                          alt="Child"
-                          className="w-6 h-6 rounded-full border-2 border-blue-200"
-                        />
-                        <span className="text-xs text-gray-500">Grade 5-7</span>
-                      </div>
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "video-1",
-                            type: "video",
-                            title: "Introduction to Science",
-                            description:
-                              "Learn the basics of science in this fun and interactive video",
-                            duration: "12:34",
-                            grade: "Grade 5-7",
-                            videoUrl: "https://www.example.com/video1",
-                          })
-                        }
-                        className="flex bg-primary-blue text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-blue-600 transition"
+              {videos.length === 0 ? (
+                <EmptyState type="videos" />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {videos.map((video: ContentItem, index: number) => (
+                    <div
+                      key={video.id || index}
+                      className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-blue-100 card-hover"
+                    >
+                      <div
+                        className="video-thumbnail h-40 relative flex items-center justify-center bg-cover bg-center"
+                        style={{
+                          backgroundImage: video.thumbnailUrl
+                            ? `url(${video.thumbnailUrl})`
+                            : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                        }}
                       >
-                        <Play className="w-4 h-4 mr-1" />
-                        Watch
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Card 2 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-purple-100 card-hover">
-                  <div
-                    className="h-40 relative flex items-center justify-center"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
-                  >
-                    <Play className="text-white w-12 h-12" />
-                    <div className="absolute top-3 right-3 bg-accent-yellow text-deep-navy px-2 py-1 rounded-full text-xs font-bold">
-                      8:45
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="font-bold text-deep-navy mb-2">
-                      Career Exploration
-                    </h4>
-                    <p className="text-gray-600 text-sm mb-3">
-                      Discover different career paths and opportunities
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"
-                          alt="Child"
-                          className="w-6 h-6 rounded-full border-2 border-purple-200"
-                        />
-                        <span className="text-xs text-gray-500">
-                          Grade 8-10
-                        </span>
+                        <Play className="text-white w-12 h-12" />
                       </div>
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "video-2",
-                            type: "video",
-                            title: "Math Magic",
-                            description:
-                              "Discover the magic of numbers and equations",
-                            duration: "8:45",
-                            grade: "Grade 8-10",
-                            videoUrl: "https://www.example.com/video2",
-                          })
-                        }
-                        className="flex bg-purple-600 text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-purple-700 transition"
-                      >
-                        <Play className="w-4 h-4 mr-1" />
-                        Watch
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Card 3 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-green-100 card-hover">
-                  <div
-                    className="h-40 relative flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                    }}
-                  >
-                    <Play className="text-white w-12 h-12" />
-                    <div className="absolute top-3 right-3 bg-accent-yellow text-deep-navy px-2 py-1 rounded-full text-xs font-bold">
-                      15:22
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="font-bold text-deep-navy mb-2">
-                      Entrepreneurship Basics
-                    </h4>
-                    <p className="text-gray-600 text-sm mb-3">
-                      Learn how to start your own business
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg"
-                          alt="Child"
-                          className="w-6 h-6 rounded-full border-2 border-green-200"
-                        />
-                        <span className="text-xs text-gray-500">
-                          Grade 9-12
-                        </span>
+                      <div className="p-6">
+                        <h4 className="font-bold text-deep-navy mb-2">
+                          {video.title}
+                        </h4>
+                        <p className="text-gray-600 text-sm mb-3">
+                          {video.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2"></div>
+                          <button
+                            onClick={() => handleContentClick(video)}
+                            className="flex bg-primary-blue text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-blue-600 transition"
+                          >
+                            <Play className="w-4 h-4 mr-1" />
+                            Watch
+                          </button>
+                        </div>
                       </div>
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "video-3",
-                            type: "video",
-                            title: "Entrepreneurship Basics",
-                            description: "Learn how to start your own business",
-                            duration: "15:22",
-                            grade: "Grade 9-12",
-                            videoUrl: "https://www.example.com/video3",
-                          })
-                        }
-                        className="flex bg-green-600 text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-green-700 transition"
-                      >
-                        <Play className="w-4 h-4 mr-1" />
-                        Watch
-                      </button>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </div>
+          )}
 
-            {/* Books Section */}
+          {/* Books Section */}
+          {activeTab === "books" && (
             <div id="books-section" className="mb-12">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-deep-navy">
                   Digital Books
                 </h3>
                 <span className="bg-pink-300 text-deep-navy px-4 py-2 rounded-full text-sm font-semibold">
-                  18 Books
+                  {books.length} Books
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {/* Book Card 1 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-pink-100 card-hover">
-                  <div
-                    className="book-cover h-48 relative flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-                    }}
-                  >
-                    <BookOpen className="text-white w-12 h-12" />
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-deep-navy mb-2 text-sm">
-                      Science Adventures
-                    </h4>
-                    <p className="text-gray-600 text-xs mb-3">
-                      Fun experiments for kids
-                    </p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "book-1",
-                            type: "text",
-                            title: "Science Fun",
-                            description: "Fun experiments for kids",
-                            grade: "Grade 3-5",
-                            content:
-                              "This is the full content of the Science Fun book. It contains exciting experiments and activities for young scientists.",
-                          })
-                        }
-                        className="w-full flex align-center justify-center bg-pink-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-pink-600 transition"
+              {books.length === 0 ? (
+                <EmptyState type="books" />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {books.map((book: ContentItem, index: number) => (
+                    <div
+                      key={book.id || index}
+                      className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-pink-100 card-hover"
+                    >
+                      <div
+                        className="book-cover h-48 relative flex items-center justify-center bg-cover bg-center"
+                        style={{
+                          backgroundImage: book.thumbnailUrl
+                            ? `url(${book.thumbnailUrl})`
+                            : "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+                        }}
                       >
-                        <Eye className="w-4 h-4 mr-1" />
-                        Read
-                      </button>
-                      <button className="bg-gray-200 text-gray-600 px-3 py-2 rounded-full text-xs hover:bg-gray-300 transition">
-                        <Download className="w-4 h-4 mr-2" />
-                      </button>
+                        <BookOpen className="text-white w-12 h-12" />
+                      </div>
+                      <div className="p-4">
+                        <h4 className="font-bold text-deep-navy mb-2 text-sm">
+                          {book.title}
+                        </h4>
+                        <p className="text-gray-600 text-xs mb-3">
+                          {book.description}
+                        </p>
+                        <div className="flex flex-col space-y-2">
+                          <button
+                            onClick={() => handleContentClick(book)}
+                            className="w-full flex items-center justify-center bg-pink-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-pink-600 transition"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            Read
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-
-                {/* Book Card 2 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-orange-100 card-hover">
-                  <div
-                    className="h-48 relative flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-                    }}
-                  >
-                    <BookOpen className="text-white w-12 h-12" />
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-deep-navy mb-2 text-sm">
-                      Math Magic
-                    </h4>
-                    <p className="text-gray-600 text-xs mb-3">
-                      Making numbers fun
-                    </p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "book-2",
-                            type: "text",
-                            title: "Math Adventures",
-                            description: "Making numbers fun",
-                            grade: "Grade 2-4",
-                            content:
-                              "This is the full content of the Math Adventures book. It makes learning math fun and engaging for young learners.",
-                          })
-                        }
-                        className="w-full flex align-center justify-center bg-orange-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-orange-600 transition"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        Read
-                      </button>
-                      <button className="bg-gray-200 text-gray-600 px-3 py-2 rounded-full text-xs hover:bg-gray-300 transition">
-                        <Download className="w-4 h-4 mr-2" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Book Card 3 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-blue-100 card-hover">
-                  <div
-                    className="h-48 relative flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    }}
-                  >
-                    <BookOpen className="text-white w-12 h-12" />
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-deep-navy mb-2 text-sm">
-                      Tech Tales
-                    </h4>
-                    <p className="text-gray-600 text-xs mb-3">
-                      Stories about technology
-                    </p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "book-3",
-                            type: "text",
-                            title: "Tech Tales",
-                            description: "Stories about technology",
-                            grade: "Grade 5-7",
-                            content:
-                              "This is the full content of the Tech Tales book. It contains exciting stories about technology and innovation.",
-                          })
-                        }
-                        className="w-full flex align-center justify-center bg-primary-blue text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-blue-600 transition"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        Read
-                      </button>
-                      <button className="bg-gray-200 text-gray-600 px-3 py-2 rounded-full text-xs hover:bg-gray-300 transition">
-                        <Download className="w-4 h-4 mr-2" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Book Card 4 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-green-100 card-hover">
-                  <div
-                    className="h-48 relative flex items-center justify-center"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
-                    }}
-                  >
-                    <BookOpen className="text-white w-12 h-12" />
-                  </div>
-                  <div className="p-4">
-                    <h4 className="font-bold text-deep-navy mb-2 text-sm">
-                      Art &amp; Creativity
-                    </h4>
-                    <p className="text-gray-600 text-xs mb-3">
-                      Unleash your creativity
-                    </p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() =>
-                          handleContentClick({
-                            id: "book-4",
-                            type: "text",
-                            title: "Art & Creativity",
-                            description: "Unleash your creativity",
-                            grade: "All Ages",
-                            content:
-                              "This is the full content of the Art & Creativity book. It provides activities and inspiration to unleash your creative potential.",
-                          })
-                        }
-                        className="w-full flex align-center justify-center bg-green-500 text-white px-3 py-2 rounded-full text-xs font-semibold hover:bg-green-600 transition"
-                      >
-                        <Eye className="w-4 h-4 mr-1" />
-                        Read
-                      </button>
-                      <button className="bg-gray-200 text-gray-600 px-3 py-2 rounded-full text-xs hover:bg-gray-300 transition">
-                        <Download className="w-4 h-4 mr-2" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
-          </div>
-
-          {/* Sidebar */}
-          {/* <div className="space-y-8">
-            <div
-              id="content-stats"
-              className="bg-white rounded-3xl p-6 shadow-lg border-2 border-gray-100 relative overflow-hidden"
-            >
-              <div className="absolute top-4 right-4 w-6 h-6 bg-accent-yellow rounded-full opacity-30 animate-pulse"></div>
-              <div
-                className="absolute bottom-4 left-4 w-4 h-4 bg-pink-300 rounded-full opacity-40 animate-pulse"
-                style={{ animationDelay: "1s" }}
-              ></div>
-
-              <h3 className="text-xl font-bold text-deep-navy mb-6">
-                Content Overview
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-primary-blue p-2 rounded-full">
-                      <i className="text-white text-sm" data-fa-i2svg="">
-                        <svg
-                          className="svg-inline--fa fa-play"
-                          aria-hidden="true"
-                          focusable="false"
-                          data-prefix="fas"
-                          data-icon="play"
-                          role="img"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 384 512"
-                          data-fa-i2svg=""
-                        >
-                          <path
-                            fill="currentColor"
-                            d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"
-                          ></path>
-                        </svg>
-                      </i>
-                    </div>
-                    <span className="font-semibold text-deep-navy">Videos</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div> */}
+          )}
         </div>
       </div>
     </div>
